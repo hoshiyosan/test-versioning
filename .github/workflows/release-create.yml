@@ -11,23 +11,23 @@ on:
 jobs:
   create-release:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged }}
-
+    if: ${{ github.event.pull_request.merged }} && startsWith(github.event.pull_request.head.ref, 'version/')
+    
     steps:
       - uses: actions/checkout@v3
 
-      - name: Ensure git tag does not already exists
+      - name: Validate version
+        id: validate_version
         run: |-
-          version="${GITHUB_REF#refs/heads/version/}"
+          src_branch="${{ github.event.pull_request.head.ref }}"
+          version="${src_branch#version/}"
           if [ $(git tag -l "$version") ]; then
             echo "Version $version already exists"
             exit 1
           fi
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Create git tag
         run: |-
-          echo "${{ github.event.pull_request.head.ref }}"
-          echo "${{ github.event.pull_request.base.ref }}"
-
-          #git tag "${GITHUB_REF#refs/heads/version/}"
-          #git push --tags
+          git tag "${{ steps.validate_version.outputs.version }}"
+          git push --tags
