@@ -1,0 +1,29 @@
+name: Create Release
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check if a release should be created
+        id: get_release_id
+        run: |-
+          latest_commit_message=$(git log -1 --pretty=%B)
+          release_tag=$(echo "$latest_commit_message" | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+")
+          if [ "$release_tag" ]; then
+            echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create release if needed
+        if: ${{steps.get_release_id.outputs.release_tag}}
+        run: |-
+          git tag "${{steps.get_release_id.outputs.release_tag}}"
+          git push --tags
