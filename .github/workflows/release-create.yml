@@ -21,6 +21,7 @@ jobs:
         run: |-
           src_branch="${{ github.event.pull_request.head.ref }}"
           version="${src_branch#version/}"
+          echo "$src_branch $version"
           if [ $(git tag -l "$version") ]; then
             echo "Version $version already exists"
             exit 1
