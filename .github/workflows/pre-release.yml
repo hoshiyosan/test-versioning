@@ -3,8 +3,6 @@ name: CI
 on:
   push:
     branches: [ "version/[0-9]+.[0-9]+.[0-9]+" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -14,4 +12,4 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Run a one-line script
-        run: echo "We are on a branch preparing future version ${GITHUB_REF#refs/heads/}}"
+        run: echo "We are on a branch preparing future version ${GITHUB_REF#refs/heads/version/}}"
