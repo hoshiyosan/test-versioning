@@ -1,0 +1,25 @@
+name: "Rebase Pull Request"
+
+on:
+  workflow_call:
+    inputs:
+      rebase_on_branch:
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Rebase PR source branch on destination"
+        run: |-
+          git config --global user.email "actions@github.com"
+          git config --global user.name "Github Actions"
+          
+          git fetch
+          git checkout ${GITHUB_REF#refs/heads/}
+          git pull --rebase origin ${{ inputs.rebase_on_branch }}
+          git push -f

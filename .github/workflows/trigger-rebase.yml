@@ -1,0 +1,18 @@
+name: "Trigger rebase if PR target this branch"
+
+on:
+  push:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Ensure git tag does not already exists
+        run: |-
+          curl --request GET \
+          --url https://api.github.com/repos/hoshiyosan/test-versioning/pulls?state=all \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+          --header 'content-type: application/json'
