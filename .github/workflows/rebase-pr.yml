@@ -1,0 +1,19 @@
+name: "Rebase Pull Request"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Rebase PR source branch on destination"
+        run: |-
+          git pull --rebase origin ${{ github.base_ref }}
+          git push -f
