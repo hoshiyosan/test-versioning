@@ -1,10 +1,11 @@
 name: "Rebase Pull Request"
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
+  workflow_call:
+    inputs:
+      rebase_on_branch:
+        type: string
+        required: true
 
 jobs:
   build:
@@ -19,6 +20,6 @@ jobs:
           git config --global user.name "Github Actions"
           
           git fetch
-          git checkout ${{ github.head_ref }}
-          git pull --rebase origin ${{ github.base_ref }}
+          git checkout ${GITHUB_REF#refs/heads/}
+          git pull --rebase origin ${{ inputs.rebase_on_branch }}
           git push -f
